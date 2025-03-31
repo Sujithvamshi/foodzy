@@ -4,11 +4,15 @@ import "./index.css";
 import FoodPlanner from "./App";
 import { Provider } from "react-redux";
 import store from "./store";
+import MealPlanner from "./MealPlanner";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
-      <FoodPlanner />
+      <div className="grid grid-cols-4">
+        <FoodPlanner />
+        <MealPlanner />
+      </div>
     </Provider>
   </StrictMode>
 );
