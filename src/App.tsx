@@ -31,11 +31,14 @@ export default function FoodPlanner() {
 
     setLoadingPlan(true);
     try {
-      const response = await fetch("http://localhost:5001/api/meal-plan", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ keywords }),
-      });
+      const response = await fetch(
+        "https://1snuye1hkk.execute-api.eu-west-1.amazonaws.com/api/meal-plan",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ keywords }),
+        }
+      );
 
       const data = await response.json();
       Object.keys(data).forEach((day) => {
