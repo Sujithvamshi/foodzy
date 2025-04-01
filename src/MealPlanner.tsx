@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TbPlus, TbShoppingCart, TbX } from "react-icons/tb";
+import { TbX } from "react-icons/tb";
 
 export default function GroceryList() {
   const [groceries, setGroceries] = useState<string[]>([]);

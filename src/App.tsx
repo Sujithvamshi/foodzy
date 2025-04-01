@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { addMeal, deleteMeal } from "./PlannerSlice";
 import { motion, AnimatePresence } from "framer-motion";
-import logo from "./assets/logo.png";
 import RandomMeal from "./RandomMeal";
 import { GiFruitBowl } from "react-icons/gi";
 
