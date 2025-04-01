@@ -3,6 +3,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { addMeal, deleteMeal } from "./PlannerSlice";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "./assets/logo.png";
+import RandomMeal from "./RandomMeal";
+import { GiFruitBowl } from "react-icons/gi";
 
 const days = [
   "Sunday",
@@ -90,87 +92,112 @@ export default function FoodPlanner() {
   };
 
   return (
-    <div className="p-6 col-span-3 bg-gray-100 min-h-screen">
+    <div className="col-span-3 min-h-screen">
       {/* Navbar */}
-      <nav className="bg-white shadow-md p-4 rounded-xl mb-6 flex justify-between items-center">
-        <img className="h-20 rounded-2xl" src={logo} alt="Logo" />
-      </nav>
 
       {/* Meal Plan Generation */}
-      <input
-        type="text"
-        placeholder="Enter keywords (e.g., high protein, vegan)"
-        value={keywords}
-        onChange={(e) => setKeywords(e.target.value)}
-        className="w-full mb-4 p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:outline-none bg-white shadow-sm"
-      />
-      <button
-        onClick={handleGenerateMealPlan}
-        className="w-full mb-4 p-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-all"
-        disabled={loadingPlan}
-      >
-        {loadingPlan ? "Generating..." : "Generate Meal Plan"}
-      </button>
+      <div className="relative h-screen">
+        <nav className="p-4 mb-6 flex items-center gap-4">
+          <GiFruitBowl className="text-white" size={90} />
+          <p className="text-6xl font-light pacifico-regular text-white">
+            foodzy
+          </p>
+        </nav>
+        <div className="absolute grid gap-8 top-1/2 left-2/5 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl">
+          <p className="text-5xl font-light pacifico-regular text-white">
+            Plan Your Plate. Love Your Week.
+          </p>
+          <div className="flex gap-4">
+            <input
+              type="text"
+              placeholder="Enter keywords (e.g., high protein, vegan)"
+              value={keywords}
+              onChange={(e) => setKeywords(e.target.value)}
+              className="w-3/4 p-3 border-2 border-emerald-500 rounded-xl focus:ring-2 focus:ring-emerald-800 focus:outline-none bg-white"
+            />
+            <button
+              onClick={handleGenerateMealPlan}
+              className="w-1/4 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-all"
+              disabled={loadingPlan}
+            >
+              {loadingPlan ? "Generating..." : "Generate Meal Plan"}
+            </button>
+          </div>
+        </div>
+        <img
+          className="w-screen bg-black absolute top-0 left-0 h-full object-cover -z-10"
+          src="https://img.freepik.com/free-photo/crop-plate-with-salad_23-2147753678.jpg"
+        ></img>
+      </div>
 
       {/* Day Selection */}
-      <div className="flex space-x-2 overflow-x-auto pb-4">
-        {days.map((day) => (
-          <button
-            key={day}
-            className={`px-5 py-2 rounded-xl text-sm font-medium transition-all duration-200 shadow-sm focus:outline-none ${
-              currentDay === day
-                ? "bg-green-600 text-white shadow-md"
-                : "bg-gray-200 text-gray-800 hover:bg-gray-300"
-            }`}
-            onClick={() => setCurrentDay(day)}
-          >
-            {day}
-          </button>
-        ))}
+      <div className="bg-[rgb(25,25,25)] h-screen flex flex-col p-6">
+        <p className="text-5xl pacifico-regular text-center py-20 text-white">
+          Your Weekly Meal Plan
+        </p>
+        <div className="flex justify-center space-x-4 pb-4">
+          {days.map((day) => (
+            <button
+              key={day}
+              className={`px-5 py-2 rounded-full hover:scale-105 font-bold border-2 border-emerald-600 transition-all duration-200 focus:outline-none ${
+                currentDay === day
+                  ? "bg-emerald-600 text-white"
+                  : "text-white hover:bg-emerald-900"
+              }`}
+              onClick={() => setCurrentDay(day)}
+            >
+              {day}
+            </button>
+          ))}
+        </div>
+        <div className="pt-6">
+          {meals.map((meal) => (
+            <div key={meal} className="mb-4 flex gap-2">
+              <input
+                type="text"
+                placeholder={`Enter ${meal} plan`}
+                value={planner.days[currentDay]?.[meal] || ""}
+                onChange={(e) =>
+                  dispatch(
+                    addMeal({ day: currentDay, meal, value: e.target.value })
+                  )
+                }
+                className="w-full py-3 px-6 border-2 border-zinc-600 rounded-full focus:outline-none placeholder:text-gray-400 text-white"
+              />
+
+              {/* Get Recipe Button */}
+              <button
+                onClick={() =>
+                  fetchRecipe(
+                    planner.days[currentDay]?.[meal] || "",
+                    `${currentDay}-${meal}`
+                  )
+                }
+                className="p-3 w-32 bg-blue-600 text-white rounded-full hover:bg-blue-800 transition-all shadow-sm focus:outline-none"
+                disabled={!planner.days[currentDay]?.[meal]}
+              >
+                {loadingRecipes[`${currentDay}-${meal}`]
+                  ? "Loading..."
+                  : "Get Recipe"}
+              </button>
+
+              {/* Delete Meal Button */}
+              <button
+                onClick={() => dispatch(deleteMeal({ day: currentDay, meal }))}
+                className=" p-3 bg-red-600 text-white rounded-full hover:bg-red-800 transition-all shadow-sm focus:outline-none"
+              >
+                Delete
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="bg-[rgb(25,25,25)] flex flex-col">
+        <RandomMeal />
       </div>
 
       {/* Meals Input Section */}
-      <div className="mt-6">
-        {meals.map((meal) => (
-          <div key={meal} className="mb-4 flex items-center gap-2">
-            <input
-              type="text"
-              placeholder={`Enter ${meal} plan`}
-              value={planner.days[currentDay]?.[meal] || ""}
-              onChange={(e) =>
-                dispatch(
-                  addMeal({ day: currentDay, meal, value: e.target.value })
-                )
-              }
-              className="w-full p-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:outline-none bg-white shadow-sm"
-            />
-
-            {/* Get Recipe Button */}
-            <button
-              onClick={() =>
-                fetchRecipe(
-                  planner.days[currentDay]?.[meal] || "",
-                  `${currentDay}-${meal}`
-                )
-              }
-              className="p-2 w-32 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-all shadow-sm focus:outline-none"
-              disabled={!planner.days[currentDay]?.[meal]}
-            >
-              {loadingRecipes[`${currentDay}-${meal}`]
-                ? "Loading..."
-                : "Get Recipe"}
-            </button>
-
-            {/* Delete Meal Button */}
-            <button
-              onClick={() => dispatch(deleteMeal({ day: currentDay, meal }))}
-              className=" p-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-all shadow-sm focus:outline-none"
-            >
-              Delete
-            </button>
-          </div>
-        ))}
-      </div>
 
       {/* Recipe Modal */}
       <AnimatePresence>

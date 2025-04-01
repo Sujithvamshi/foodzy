@@ -9,7 +9,7 @@ import MealPlanner from "./MealPlanner";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
-      <div className="grid grid-cols-4">
+      <div className="grid relative">
         <FoodPlanner />
         <MealPlanner />
       </div>
